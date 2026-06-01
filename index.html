@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🎵 絕對節奏 (Rhythm Flow) - 盲打特訓</title>
     
-    <!-- Fonts for Elegant Styling -->
+    <!-- Fonts for Elegant & Modern Styling -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;900&family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Serif+TC:wght@400;600;900&family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400&display=swap" rel="stylesheet">
 
     <!-- CDNs -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -26,20 +26,23 @@
                 extend: {
                     fontFamily: {
                         serif: ['"Playfair Display"', '"Noto Serif TC"', 'serif'],
+                        sans: ['"Space Grotesk"', '"Outfit"', 'system-ui', '-apple-system', 'sans-serif'],
+                        mono: ['monospace'],
                     },
                     colors: {
                         coffee: {
-                            900: '#1a1410',
-                            800: '#2d221b',
-                            700: '#4a372a',
-                            600: '#6b4c3a',
-                            500: '#8b6d43',
-                            400: '#a88b5c',
-                            300: '#c5a059',
-                            200: '#e6d5c3',
-                            100: '#f4ede4'
+                            900: 'var(--color-bg)',
+                            800: 'oklch(14% 0.02 250)',
+                            700: 'oklch(20% 0.03 250)',
+                            600: 'oklch(26% 0.04 250)',
+                            500: 'oklch(35% 0.05 250)',
+                            400: 'oklch(70% 0.02 250)',
+                            300: 'oklch(82% 0.15 85)',
+                            200: 'oklch(90% 0.02 250)',
+                            100: 'var(--color-text-main)'
                         },
-                        gold: '#d4af37',
+                        gold: 'var(--color-secondary)',
+                        cyan: 'var(--color-primary)',
                     }
                 }
             }
@@ -47,40 +50,59 @@
     </script>
 
     <style>
+        :root {
+            --color-bg: oklch(10% 0.015 250);
+            --color-panel: oklch(13% 0.02 250);
+            --color-primary: oklch(72% 0.18 250); /* Electric Blue */
+            --color-secondary: oklch(82% 0.15 85); /* Champagne Gold */
+            --color-tertiary: oklch(68% 0.22 350); /* Warning Crimson Pink */
+            --color-text-main: oklch(97% 0.01 250);
+            --color-text-sub: oklch(82% 0.02 250);
+            --color-success: oklch(76% 0.14 142);
+        }
+
         body {
-            background-color: #080605;
-            color: #e6d5c3;
+            background-color: var(--color-bg);
+            color: var(--color-text-main);
             overflow: hidden;
             margin: 0;
             padding: 0;
             user-select: none;
+            font-family: "Space Grotesk", "Outfit", system-ui, -apple-system, sans-serif;
+            -webkit-font-smoothing: antialiased;
         }
 
         /* 典雅發光效果 */
         .glow-text {
-            text-shadow: 0 0 10px rgba(197, 160, 89, 0.4), 0 0 20px rgba(197, 160, 89, 0.2);
+            text-shadow: 0 0 15px oklch(72% 0.18 250 / 0.4), 0 0 30px oklch(72% 0.18 250 / 0.2);
         }
         
         .glow-text-gold {
-            text-shadow: 0 0 15px rgba(212, 175, 55, 0.6), 0 0 30px rgba(212, 175, 55, 0.4);
+            text-shadow: 0 0 15px oklch(82% 0.15 85 / 0.5), 0 0 35px oklch(82% 0.15 85 / 0.3);
         }
 
         .btn-elegant {
-            background: transparent;
-            border: 1px solid #4a372a;
-            color: #a88b5c;
-            transition: all 0.4s ease;
+            background: oklch(15% 0.02 250 / 0.45);
+            border: 1px solid oklch(100% 0 0 / 0.08);
+            color: var(--color-text-sub);
+            border-radius: 12px;
+            font-family: "Space Grotesk", "Outfit", sans-serif;
+            font-weight: 500;
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
             position: relative;
             overflow: hidden;
+            box-shadow: 
+                0 4px 6px oklch(0% 0 0 / 0.15),
+                inset 0 1px 1px oklch(100% 0 0 / 0.05);
         }
 
         .btn-elegant::before {
             content: '';
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(45deg, transparent, rgba(197, 160, 89, 0.1), transparent);
+            background: linear-gradient(90deg, transparent, oklch(100% 0 0 / 0.06), transparent);
             transform: translateX(-100%);
-            transition: transform 0.6s ease;
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .btn-elegant:hover::before {
@@ -88,41 +110,93 @@
         }
 
         .btn-elegant:hover {
-            border-color: #c5a059;
-            color: #e6d5c3;
-            box-shadow: 0 0 20px rgba(139, 109, 67, 0.2) inset, 0 0 20px rgba(139, 109, 67, 0.2);
+            border-color: var(--color-secondary);
+            color: var(--color-text-main);
+            transform: translateY(-2px);
+            box-shadow: 
+                0 8px 24px oklch(82% 0.15 85 / 0.14),
+                inset 0 1px 1px oklch(100% 0 0 / 0.1);
+        }
+
+        .btn-elegant:active {
+            transform: translateY(1px) scale(0.97);
+            box-shadow: 
+                0 2px 4px oklch(0% 0 0 / 0.2),
+                inset 0 1px 1px oklch(0% 0 0 / 0.1);
         }
 
         .btn-elegant.active {
-            background: rgba(74, 55, 42, 0.3);
-            border-color: #c5a059;
-            color: #d4af37;
-            box-shadow: 0 0 20px rgba(197, 160, 89, 0.3) inset;
+            background: oklch(82% 0.15 85 / 0.1);
+            border-color: var(--color-secondary);
+            color: var(--color-secondary);
+            box-shadow: 
+                0 0 25px oklch(82% 0.15 85 / 0.25) inset,
+                0 4px 12px oklch(82% 0.15 85 / 0.15);
+            font-weight: 600;
         }
 
         canvas {
             display: block;
-            background: linear-gradient(180deg, #0a0807 0%, #16120e 100%);
-            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
-            border-left: 1px solid rgba(139, 109, 67, 0.2);
-            border-right: 1px solid rgba(139, 109, 67, 0.2);
+            background: linear-gradient(180deg, oklch(10% 0.015 250) 0%, oklch(14% 0.02 250) 100%);
+            box-shadow: 0 0 60px oklch(0% 0 0 / 0.7);
+            border-left: 1px solid oklch(100% 0 0 / 0.06);
+            border-right: 1px solid oklch(100% 0 0 / 0.06);
+            border-radius: 16px;
+        }
+
+        /* Ambient background mesh gradient */
+        .ambient-mesh {
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 10% 20%, oklch(72% 0.18 250 / 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, oklch(82% 0.15 85 / 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, oklch(68% 0.22 350 / 0.04) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .grid-overlay {
+            position: absolute;
+            inset: 0;
+            background-size: 50px 50px;
+            background-image: 
+                linear-gradient(to right, oklch(100% 0 0 / 0.015) 1px, transparent 1px),
+                linear-gradient(to bottom, oklch(100% 0 0 / 0.015) 1px, transparent 1px);
+            mask-image: radial-gradient(ellipse at center, black, transparent 75%);
+            -webkit-mask-image: radial-gradient(ellipse at center, black, transparent 75%);
+            pointer-events: none;
+            z-index: 0;
         }
 
         /* 脈衝動畫 */
         @keyframes pulse-elegant {
-            0% { transform: scale(1); text-shadow: 0 0 10px rgba(212, 175, 55, 0.5); }
-            50% { transform: scale(1.1); text-shadow: 0 0 25px rgba(212, 175, 55, 0.8); }
-            100% { transform: scale(1); text-shadow: 0 0 10px rgba(212, 175, 55, 0.5); }
+            0% { transform: scale(1); text-shadow: 0 0 15px oklch(82% 0.15 85 / 0.6); }
+            50% { transform: scale(1.1); text-shadow: 0 0 35px oklch(82% 0.15 85 / 0.9); }
+            100% { transform: scale(1); text-shadow: 0 0 15px oklch(82% 0.15 85 / 0.6); }
         }
         
         .animate-combo {
-            animation: pulse-elegant 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: pulse-elegant 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .glass-panel {
-            background: rgba(10, 8, 7, 0.85);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(139, 109, 67, 0.15);
+            background: oklch(13% 0.02 250 / 0.7);
+            backdrop-filter: blur(24px) saturate(160%);
+            -webkit-backdrop-filter: blur(24px) saturate(160%);
+            border: 1px solid oklch(100% 0 0 / 0.07);
+            box-shadow: 
+                0 10px 40px oklch(0% 0 0 / 0.5),
+                inset 0 1px 1px oklch(100% 0 0 / 0.08);
+        }
+
+        @keyframes fade-in {
+            from { opacity: 0; transform: scale(0.96) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .animate-fade-in {
+            animation: fade-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
     </style>
 </head>
@@ -152,13 +226,13 @@
             'n': { col: 5, hand: 'R', row: 4 }, 'm': { col: 6, hand: 'R', row: 4 }, ',': { col: 7, hand: 'R', row: 4 }, '.': { col: 8, hand: 'R', row: 4 }, '/': { col: 9, hand: 'R', row: 4 }
         };
 
-        // 色彩定義 (高雅咖啡/金色系)
+        // 色彩定義 (Open Design: OKLch 感官平衡色彩)
         const colors = {
-            perfect: '#d4af37', // 金色
-            great: '#c5a059',   // 淺咖啡金
-            good: '#8b6d43',    // 深咖啡
-            bg: '#0a0807',
-            hitLine: 'rgba(197, 160, 89, 0.6)'
+            perfect: '#f1cb6f', // oklch(82% 0.15 85) 香檳琉璃金 (完美)
+            great: '#68b6ef',   // oklch(72% 0.18 250) 活力電光藍 (極佳)
+            good: '#cc73e1',    // oklch(68% 0.22 310) 星雲紫 (良好)
+            bg: '#0c0d10',      // oklch(10% 0.015 250) 黑曜太空深底
+            hitLine: 'rgba(104, 182, 239, 0.45)'
         };
 
         const App = () => {
@@ -347,10 +421,10 @@
 
                 // 決定顏色 (新手模式分左右手)
                 if (difficulty.startsWith('novice')) {
-                    // 左手金色，右手銀白
-                    color = keyInfo.hand === 'L' ? '#d4af37' : '#cbd5e1';
+                    // 左手金色，右手粉綠
+                    color = keyInfo.hand === 'L' ? '#f1cb6f' : '#99f6e4';
                 } else {
-                    const noteColors = [colors.perfect, colors.great, '#e6d5c3', '#a88b5c'];
+                    const noteColors = [colors.perfect, colors.great, colors.good, '#e2e8f0'];
                     color = noteColors[Math.floor(Math.random() * noteColors.length)];
                 }
 
@@ -450,7 +524,7 @@
                 const laneWidth = eng.canvasWidth / currentLanes;
 
                 // 畫軌道背景線
-                ctx.strokeStyle = 'rgba(139, 109, 67, 0.08)';
+                ctx.strokeStyle = 'rgba(104, 182, 239, 0.06)';
                 ctx.lineWidth = 1;
                 for(let i=1; i<currentLanes; i++){
                     ctx.beginPath();
@@ -460,15 +534,15 @@
                 }
 
                 // 畫判定線
-                const glowAlpha = 0.15 + eng.hitLineGlow * 0.4;
-                ctx.shadowBlur = 15 * eng.hitLineGlow;
-                ctx.shadowColor = colors.perfect;
-                ctx.fillStyle = `rgba(212, 175, 55, ${glowAlpha})`;
+                const glowAlpha = 0.2 + eng.hitLineGlow * 0.5;
+                ctx.shadowBlur = 20 * eng.hitLineGlow;
+                ctx.shadowColor = colors.great;
+                ctx.fillStyle = `rgba(104, 182, 239, ${glowAlpha})`;
                 ctx.fillRect(0, eng.hitLineY - 2, eng.canvasWidth, 4);
                 
-                ctx.fillStyle = 'rgba(212, 175, 55, 0.8)';
-                ctx.fillRect(0, eng.hitLineY - 2, 8, 4);
-                ctx.fillRect(eng.canvasWidth - 8, eng.hitLineY - 2, 8, 4);
+                ctx.fillStyle = colors.perfect;
+                ctx.fillRect(0, eng.hitLineY - 2, 12, 4);
+                ctx.fillRect(eng.canvasWidth - 12, eng.hitLineY - 2, 12, 4);
                 ctx.shadowBlur = 0; 
 
                 // 畫音符 (動態縮放半徑與字體)
@@ -489,7 +563,7 @@
                     
                     ctx.fillStyle = note.color;
                     const fontSize = Math.max(12, noteRadius);
-                    ctx.font = `500 ${fontSize}px "Noto Serif TC", "Playfair Display"`;
+                    ctx.font = `600 ${fontSize}px "Space Grotesk", "Outfit", sans-serif`;
                     ctx.fillText(note.displayChar, note.x, note.y + (fontSize * 0.1));
                     ctx.shadowBlur = 0; 
                 }
@@ -508,8 +582,8 @@
                 for (let f of eng.feedbackTexts) {
                     ctx.fillStyle = f.color;
                     ctx.globalAlpha = f.life / f.maxLife;
-                    ctx.font = 'italic 600 20px "Playfair Display"';
-                    ctx.shadowBlur = 8;
+                    ctx.font = 'italic 800 24px "Space Grotesk", "Outfit", sans-serif';
+                    ctx.shadowBlur = 12;
                     ctx.shadowColor = f.color;
                     ctx.fillText(f.text, f.x, f.y);
                 }
@@ -659,146 +733,177 @@
             };
 
             return (
-                <div className="relative w-screen h-screen flex justify-center items-center bg-coffee-900 font-serif">
-                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-coffee-800/40 via-coffee-900/80 to-black pointer-events-none z-0"></div>
+                <div className="relative w-screen h-screen flex justify-center items-center bg-[var(--color-bg)] font-sans overflow-hidden">
+                    {/* Ambient Graphics */}
+                    <div className="ambient-mesh"></div>
+                    <div className="grid-overlay"></div>
                     
                     <canvas ref={canvasRef} className="relative z-10"></canvas>
                     
                     {/* HUD Layer */}
                     <div className={`absolute top-0 left-0 w-full h-full pointer-events-none flex flex-col z-20 transition-opacity duration-500 ${gameState === 'playing' ? 'opacity-100' : 'opacity-0'}`}>
-                        <div className="flex justify-between items-start p-6 md:p-10 w-full max-w-[600px] mx-auto">
-                            <div className="flex flex-col">
-                                <span className="text-coffee-400 text-xs tracking-[0.3em] uppercase mb-1">Score</span>
-                                <span ref={scoreDisplayRef} className="text-3xl font-semibold text-coffee-100 glow-text tabular-nums">00000</span>
+                        <div className="flex justify-between items-center p-4 md:p-6 w-full max-w-[620px] mx-auto mt-4">
+                            {/* Score Capsule */}
+                            <div className="flex items-center gap-3 glass-panel px-4 py-2 rounded-full pointer-events-auto border border-white/5 shadow-lg shadow-black/30">
+                                <div className="w-2 h-2 rounded-full bg-[var(--color-primary)] animate-pulse shadow-[0_0_10px_var(--color-primary)]"></div>
+                                <div className="flex flex-col">
+                                    <span className="text-[oklch(70%_0.02_250)] text-[10px] font-bold tracking-[0.15em] uppercase leading-none mb-0.5">Score</span>
+                                    <span ref={scoreDisplayRef} className="text-lg font-bold text-white tracking-wider tabular-nums leading-none">00000</span>
+                                </div>
                             </div>
                             
-                            {/* 暫停按鈕 */}
+                            {/* Pause Button Capsule */}
                             <button 
                                 onClick={togglePause}
-                                className="pointer-events-auto mt-1 flex flex-col items-center justify-center group cursor-pointer"
+                                className="pointer-events-auto flex items-center justify-center p-3 rounded-full border border-white/5 bg-white/5 hover:bg-white/10 text-[var(--color-text-sub)] hover:text-white hover:border-[var(--color-secondary)] hover:shadow-[0_0_15px_oklch(82%_0.15_85_/_0.2)] active:scale-90 transition-all duration-300 cursor-pointer shadow-lg shadow-black/20"
                                 title="暫停 (ESC)"
                             >
-                                <div className="p-3 rounded-full border border-coffee-700/50 bg-coffee-900/50 text-coffee-400 group-hover:text-gold group-hover:border-gold transition-all duration-300">
-                                    <i data-lucide={isPaused ? "play" : "pause"} className="w-5 h-5"></i>
-                                </div>
+                                <i data-lucide={isPaused ? "play" : "pause"} className="w-4.5 h-4.5"></i>
                             </button>
 
-                            <div className="flex flex-col items-end">
-                                <span className="text-coffee-400 text-xs tracking-[0.3em] uppercase mb-1">Combo</span>
-                                <span ref={comboDisplayRef} className="text-4xl font-bold text-gold glow-text-gold tabular-nums transition-colors duration-300">0</span>
+                            {/* Combo Capsule */}
+                            <div className="flex items-center gap-3 glass-panel px-4 py-2 rounded-full pointer-events-auto border border-white/5 shadow-lg shadow-black/30">
+                                <div className="flex flex-col items-end">
+                                    <span className="text-[oklch(70%_0.02_250)] text-[10px] font-bold tracking-[0.15em] uppercase leading-none mb-0.5">Combo</span>
+                                    <span ref={comboDisplayRef} className="text-lg font-extrabold text-[var(--color-secondary)] tabular-nums leading-none transition-all duration-300">0</span>
+                                </div>
+                                <div className="w-2 h-2 rounded-full bg-[var(--color-secondary)] shadow-[0_0_10px_var(--color-secondary)]"></div>
                             </div>
                         </div>
                     </div>
 
                     {/* Pause Screen */}
                     {isPaused && (
-                        <div className="absolute inset-0 glass-panel z-40 flex flex-col justify-center items-center">
-                            <h2 className="text-4xl md:text-5xl font-black text-gold glow-text-gold mb-12 tracking-[0.3em]">PAUSED</h2>
-                            <div className="flex flex-col gap-6 w-full max-w-xs">
-                                <button onClick={togglePause} className="btn-elegant py-4 text-sm tracking-[0.3em] uppercase cursor-pointer">
-                                    Resume
+                        <div className="absolute inset-0 glass-panel z-40 flex flex-col justify-center items-center backdrop-blur-md">
+                            <div className="text-center mb-10">
+                                <h2 className="text-4xl md:text-5xl font-extrabold tracking-[0.4em] text-[var(--color-secondary)] glow-text-gold">PAUSED</h2>
+                                <div className="h-[2px] w-20 bg-gradient-to-r from-transparent via-[var(--color-secondary)] to-transparent mx-auto mt-4 opacity-70"></div>
+                            </div>
+                            <div className="flex flex-col gap-4 w-full max-w-xs px-6">
+                                <button onClick={togglePause} className="btn-elegant py-3 px-6 text-xs tracking-[0.3em] uppercase cursor-pointer font-bold flex items-center justify-center gap-2">
+                                    <i data-lucide="play" className="w-3.5 h-3.5"></i> Resume
                                 </button>
-                                <button onClick={quitGame} className="btn-elegant py-4 text-sm tracking-[0.3em] uppercase text-coffee-400 cursor-pointer">
-                                    Quit to Menu
+                                <button onClick={quitGame} className="btn-elegant py-3 px-6 text-xs tracking-[0.3em] uppercase text-red-400 border-red-500/10 hover:border-red-500/50 hover:bg-red-500/10 cursor-pointer font-bold flex items-center justify-center gap-2">
+                                    <i data-lucide="log-out" className="w-3.5 h-3.5"></i> Quit to Menu
                                 </button>
                             </div>
-                            <p className="absolute bottom-10 text-coffee-500 text-xs tracking-widest">Press ESC to Resume</p>
+                            <p className="absolute bottom-10 text-[oklch(60%_0.02_250)] text-xs tracking-[0.2em] uppercase flex items-center gap-1.5 animate-pulse">
+                                <i data-lucide="keyboard" className="w-3.5 h-3.5"></i> Press ESC to Resume
+                            </p>
                         </div>
                     )}
 
                     {/* Menu Screen */}
                     {gameState === 'menu' && (
-                        <div className="absolute inset-0 glass-panel z-50 flex flex-col justify-center items-center">
-                            <div className="text-center mb-16">
-                                <h1 className="text-5xl md:text-7xl font-black mb-4 tracking-widest text-gold glow-text-gold flex items-center justify-center gap-4">
-                                    <i data-lucide="music-4" className="w-10 h-10 md:w-14 md:h-14"></i>
-                                    RHYTHM FLOW
-                                </h1>
-                                <div className="h-px w-32 bg-gradient-to-r from-transparent via-gold to-transparent mx-auto mb-4 opacity-50"></div>
-                                <p className="text-lg tracking-[0.5em] text-coffee-300 font-light">盲打極限特訓艙</p>
-                            </div>
+                        <div className="absolute inset-0 z-50 flex flex-col justify-center items-center p-6">
+                            <div className="w-full max-w-lg glass-panel p-8 md:p-10 rounded-2xl border border-white/5 shadow-2xl flex flex-col justify-center items-center animate-fade-in relative overflow-hidden">
+                                {/* Decorative Tech Corners */}
+                                <div className="absolute top-0 left-0 w-8 h-[2px] bg-[var(--color-primary)]"></div>
+                                <div className="absolute top-0 left-0 w-[2px] h-8 bg-[var(--color-primary)]"></div>
+                                <div className="absolute bottom-0 right-0 w-8 h-[2px] bg-[var(--color-secondary)]"></div>
+                                <div className="absolute bottom-0 right-0 w-[2px] h-8 bg-[var(--color-secondary)]"></div>
 
-                            <div className="flex flex-col items-center gap-8 w-full max-w-lg px-6">
-                                {/* Language Selection */}
-                                <div className="w-full">
-                                    <p className="text-coffee-400 text-xs tracking-widest text-center mb-3 uppercase">Layout</p>
-                                    <div className="flex gap-4 w-full">
-                                        <button 
-                                            className={`flex-1 py-3 px-4 rounded-sm text-sm tracking-wider cursor-pointer btn-elegant ${language === 'en' ? 'active' : ''}`}
-                                            onClick={() => setLanguage('en')}
-                                        >
-                                            英文模式 (A-Z)
-                                        </button>
-                                        <button 
-                                            className={`flex-1 py-3 px-4 rounded-sm text-sm tracking-wider cursor-pointer btn-elegant ${language === 'zh' ? 'active' : ''}`}
-                                            onClick={() => setLanguage('zh')}
-                                        >
-                                            注音模式 (ㄅ-ㄦ)
-                                        </button>
-                                    </div>
-                                    {language === 'zh' && (
-                                        <p className="text-coffee-300 text-xs mt-3 text-center opacity-80 flex items-center justify-center gap-1">
-                                            <i data-lucide="alert-circle" className="w-3 h-3"></i> 練習前請確保實體輸入法為【英文】
-                                        </p>
-                                    )}
+                                <div className="text-center mb-8">
+                                    <h1 className="text-4xl md:text-5xl font-black mb-2 tracking-[0.25em] text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-secondary)] to-[var(--color-primary)] flex items-center justify-center gap-3 filter drop-shadow-[0_0_15px_oklch(82%_0.15_85_/_0.2)]">
+                                        <i data-lucide="music-4" className="w-8 h-8 md:w-10 md:h-10 text-[var(--color-secondary)]"></i>
+                                        RHYTHM FLOW
+                                    </h1>
+                                    <div className="h-[2px] w-32 bg-gradient-to-r from-transparent via-[var(--color-secondary)] to-transparent mx-auto mb-3 opacity-60"></div>
+                                    <p className="text-xs tracking-[0.6em] text-[oklch(70%_0.02_250)] font-bold uppercase">盲打極限特訓艙</p>
                                 </div>
 
-                                {/* Difficulty Selection */}
-                                <div className="w-full">
-                                    <p className="text-coffee-400 text-xs tracking-widest text-center mb-3 uppercase border-b border-coffee-800 pb-2">Difficulty</p>
-                                    
-                                    <div className="flex flex-col gap-4">
-                                        {/* A: 新手村 */}
-                                        <div className="bg-coffee-900/30 p-3 rounded-md border border-coffee-700/30">
-                                            <p className="text-gold text-[10px] tracking-widest text-left mb-2 uppercase">A. 新手村 (左右手雙色標示，固定鍵位)</p>
-                                            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 w-full">
-                                                <button onClick={() => setDifficulty('novice-1')} className={`py-2 px-1 rounded-sm text-[10px] tracking-widest cursor-pointer btn-elegant ${difficulty === 'novice-1' ? 'active' : ''}`}>LV.1 (基準列)</button>
-                                                <button onClick={() => setDifficulty('novice-2')} className={`py-2 px-1 rounded-sm text-[10px] tracking-widest cursor-pointer btn-elegant ${difficulty === 'novice-2' ? 'active' : ''}`}>LV.2 (+上列)</button>
-                                                <button onClick={() => setDifficulty('novice-3')} className={`py-2 px-1 rounded-sm text-[10px] tracking-widest cursor-pointer btn-elegant ${difficulty === 'novice-3' ? 'active' : ''}`}>LV.3 (+下列)</button>
-                                                <button onClick={() => setDifficulty('novice-4')} className={`py-2 px-1 rounded-sm text-[10px] tracking-widest cursor-pointer btn-elegant ${difficulty === 'novice-4' ? 'active' : ''}`}>LV.4 (全鍵盤)</button>
-                                            </div>
+                                <div className="flex flex-col items-center gap-6 w-full">
+                                    {/* Language Selection */}
+                                    <div className="w-full">
+                                        <div className="flex items-center gap-2 mb-2.5">
+                                            <div className="w-1.5 h-3 bg-[var(--color-primary)] rounded-full"></div>
+                                            <p className="text-[oklch(70%_0.02_250)] text-[10px] font-bold tracking-[0.15em] uppercase">Layout・輸入配置</p>
                                         </div>
-
-                                        {/* B & C: 進階與高手 */}
-                                        <div className="bg-coffee-900/30 p-3 rounded-md border border-coffee-700/30">
-                                            <p className="text-coffee-300 text-[10px] tracking-widest text-left mb-2 uppercase">B. 進階挑戰 (顏色統一)</p>
-                                            <div className="grid grid-cols-2 gap-2 w-full">
-                                                <button onClick={() => setDifficulty('standard')} className={`py-2 px-2 rounded-sm text-[10px] tracking-widest cursor-pointer btn-elegant ${difficulty === 'standard' ? 'active' : ''}`}>標準 (固定鍵位，速度提升)</button>
-                                                <button onClick={() => setDifficulty('expert')} className={`py-2 px-2 rounded-sm text-[10px] tracking-widest cursor-pointer btn-elegant ${difficulty === 'expert' ? 'active' : ''}`}>高手 (隨機掉落，極限速度)</button>
-                                            </div>
+                                        <div className="flex gap-4 w-full">
+                                            <button 
+                                                className={`flex-1 py-3 px-4 text-xs tracking-wider cursor-pointer btn-elegant flex items-center justify-center gap-2 ${language === 'en' ? 'active' : ''}`}
+                                                onClick={() => setLanguage('en')}
+                                            >
+                                                <i data-lucide="languages" className="w-3.5 h-3.5"></i> 英文鍵盤 (A-Z)
+                                            </button>
+                                            <button 
+                                                className={`flex-1 py-3 px-4 text-xs tracking-wider cursor-pointer btn-elegant flex items-center justify-center gap-2 ${language === 'zh' ? 'active' : ''}`}
+                                                onClick={() => setLanguage('zh')}
+                                            >
+                                                <i data-lucide="keyboard" className="w-3.5 h-3.5"></i> 注音模式 (ㄅ-ㄦ)
+                                            </button>
                                         </div>
-                                    </div>
-
-                                    {/* 難度提示文字 */}
-                                    <div className="h-6 mt-3 flex justify-center">
-                                        {difficulty.startsWith('novice') && (
-                                            <p className="text-gold text-xs tracking-widest text-center opacity-80 flex items-center justify-center gap-1 animate-pulse">
-                                                <i data-lucide="info" className="w-3 h-3"></i> 提示：左手為金色，右手為銀白色
-                                            </p>
-                                        )}
-                                        {difficulty === 'expert' && (
-                                            <p className="text-coffee-400 text-xs tracking-widest text-center opacity-80 flex items-center justify-center gap-1">
-                                                <i data-lucide="flame" className="w-3 h-3"></i> 警告：鍵盤位置將完全打亂！
+                                        {language === 'zh' && (
+                                            <p className="text-amber-400 text-[10px] mt-2 text-center opacity-90 flex items-center justify-center gap-1.5 font-medium">
+                                                <i data-lucide="alert-circle" className="w-3 h-3"></i> 練習前請確保實體輸入法為【英文】
                                             </p>
                                         )}
                                     </div>
+
+                                    {/* Difficulty Selection */}
+                                    <div className="w-full">
+                                        <div className="flex items-center gap-2 mb-2.5">
+                                            <div className="w-1.5 h-3 bg-[var(--color-secondary)] rounded-full"></div>
+                                            <p className="text-[oklch(70%_0.02_250)] text-[10px] font-bold tracking-[0.15em] uppercase border-b border-white/5 pb-1 w-full">Difficulty・訓練強度</p>
+                                        </div>
+                                        
+                                        <div className="flex flex-col gap-3">
+                                            {/* A: 新手村 */}
+                                            <div className="bg-white/[0.02] p-3.5 rounded-xl border border-white/5">
+                                                <p className="text-[var(--color-secondary)] text-[10px] font-bold tracking-[0.1em] text-left mb-2.5 uppercase flex items-center gap-1.5">
+                                                    <i data-lucide="graduation-cap" className="w-3.5 h-3.5"></i> A. 新手專區 (手部雙色標記，固定鍵位)
+                                                </p>
+                                                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 w-full">
+                                                    <button onClick={() => setDifficulty('novice-1')} className={`py-2 px-1 text-[10px] tracking-widest cursor-pointer btn-elegant ${difficulty === 'novice-1' ? 'active' : ''}`}>LV.1 (基準列)</button>
+                                                    <button onClick={() => setDifficulty('novice-2')} className={`py-2 px-1 text-[10px] tracking-widest cursor-pointer btn-elegant ${difficulty === 'novice-2' ? 'active' : ''}`}>LV.2 (+上列)</button>
+                                                    <button onClick={() => setDifficulty('novice-3')} className={`py-2 px-1 text-[10px] tracking-widest cursor-pointer btn-elegant ${difficulty === 'novice-3' ? 'active' : ''}`}>LV.3 (+下列)</button>
+                                                    <button onClick={() => setDifficulty('novice-4')} className={`py-2 px-1 text-[10px] tracking-widest cursor-pointer btn-elegant ${difficulty === 'novice-4' ? 'active' : ''}`}>LV.4 (全區)</button>
+                                                </div>
+                                            </div>
+
+                                            {/* B & C: 進階與高手 */}
+                                            <div className="bg-white/[0.02] p-3.5 rounded-xl border border-white/5">
+                                                <p className="text-[var(--color-primary)] text-[10px] font-bold tracking-[0.1em] text-left mb-2.5 uppercase flex items-center gap-1.5">
+                                                    <i data-lucide="zap" className="w-3.5 h-3.5"></i> B. 進階極限 (色彩統一，速度考驗)
+                                                </p>
+                                                <div className="grid grid-cols-2 gap-2 w-full">
+                                                    <button onClick={() => setDifficulty('standard')} className={`py-2 px-2 text-[10px] tracking-widest cursor-pointer btn-elegant ${difficulty === 'standard' ? 'active' : ''}`}>標準 (固定軌，中速)</button>
+                                                    <button onClick={() => setDifficulty('expert')} className={`py-2 px-2 text-[10px] tracking-widest cursor-pointer btn-elegant ${difficulty === 'expert' ? 'active' : ''}`}>高手 (隨機軌，極速)</button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* 難度提示文字 */}
+                                        <div className="h-4 mt-2.5 flex justify-center">
+                                            {difficulty.startsWith('novice') && (
+                                                <p className="text-[var(--color-secondary)] text-[11px] tracking-wider text-center opacity-90 flex items-center justify-center gap-1 font-medium">
+                                                    <i data-lucide="info" className="w-3.5 h-3.5"></i> 提示：左手為金色音符，右手為粉綠音符
+                                                </p>
+                                            )}
+                                            {difficulty === 'expert' && (
+                                                <p className="text-red-400 text-[11px] tracking-wider text-center opacity-90 flex items-center justify-center gap-1 font-medium animate-pulse">
+                                                    <i data-lucide="flame" className="w-3.5 h-3.5"></i> 警告：音符掉落軌道將與鍵盤位置完全脫鉤！
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* Start Button */}
+                                    <button 
+                                        onClick={handleStart}
+                                        className="mt-2 group relative inline-flex items-center justify-center px-16 py-4 font-bold text-black bg-gradient-to-r from-[var(--color-primary)] via-[var(--color-secondary)] to-[var(--color-primary)] rounded-xl overflow-hidden transition-all duration-300 hover:scale-[1.04] active:scale-95 shadow-[0_0_30px_oklch(82%_0.15_85_/_0.25)] hover:shadow-[0_0_50px_oklch(82%_0.15_85_/_0.55)] cursor-pointer tracking-[0.3em] text-xs font-black uppercase"
+                                    >
+                                        <span className="absolute inset-0 w-full h-full bg-white/15 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+                                        <span className="relative flex items-center gap-2 text-slate-950">
+                                            INITIALIZE <i data-lucide="play" className="w-4 h-4 fill-slate-950"></i>
+                                        </span>
+                                    </button>
                                 </div>
 
-                                {/* Start Button */}
-                                <button 
-                                    onClick={handleStart}
-                                    className="mt-2 group relative inline-flex items-center justify-center px-12 py-4 font-bold text-black bg-gradient-to-r from-coffee-300 via-gold to-coffee-300 rounded-sm overflow-hidden transition-all duration-300 hover:scale-105 shadow-[0_0_30px_rgba(212,175,55,0.3)] hover:shadow-[0_0_50px_rgba(212,175,55,0.6)] cursor-pointer tracking-[0.2em]"
-                                >
-                                    <span className="absolute w-0 h-0 transition-all duration-500 ease-out bg-white rounded-full group-hover:w-56 group-hover:h-56 opacity-10"></span>
-                                    <span className="relative flex items-center gap-2">
-                                        INITIALIZE <i data-lucide="play" className="w-4 h-4 fill-black"></i>
-                                    </span>
-                                </button>
-                            </div>
-
-                            <div className="mt-12 text-coffee-400 text-xs tracking-widest text-center opacity-60">
-                                <p>當字元落到下方判定線時，按下對應按鍵。</p>
-                                <p className="mt-1">全程盯著螢幕，不要低頭看鍵盤！</p>
+                                <div className="mt-8 text-[oklch(60%_0.02_250)] text-[11px] tracking-widest text-center opacity-80 flex flex-col gap-1 leading-relaxed">
+                                    <p className="flex items-center justify-center gap-1"><i data-lucide="mouse-pointer-click" className="w-3 h-3"></i> 當字元落至底部判定線時，按下對應按鍵。</p>
+                                    <p className="font-bold text-[var(--color-secondary)]">全程注視螢幕，用肌肉記憶盲打，絕對不要低頭看鍵盤！</p>
+                                </div>
                             </div>
                         </div>
                     )}
