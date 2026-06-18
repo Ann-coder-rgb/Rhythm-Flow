@@ -9,13 +9,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Serif+TC:wght@400;600;900&family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400&display=swap" rel="stylesheet">
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.3/babel.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.292.0/umd/lucide.min.js"></script>
-
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -45,6 +38,13 @@
             }
         }
     </script>
+
+    <script src="https://cdn.tailwindcss.com/3.4.3"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.3/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.292.0/umd/lucide.min.js"></script>
 
     <style>
         :root {
@@ -200,7 +200,7 @@
 <body>
     <div id="root"></div>
 
-    <script type="text/babel" data-type="module" data-presets="react">
+    <script type="text/babel" data-presets="react">
         const { useState, useEffect, useRef, useCallback } = React;
 
         // --- 遊戲資料與設定 ---
@@ -798,118 +798,3 @@
                                 <div className="absolute top-0 left-0 w-8 h-[2px] bg-[var(--color-primary)]"></div>
                                 <div className="absolute top-0 left-0 w-[2px] h-8 bg-[var(--color-primary)]"></div>
                                 <div className="absolute bottom-0 right-0 w-8 h-[2px] bg-[var(--color-secondary)]"></div>
-                                <div className="absolute bottom-0 right-0 w-[2px] h-8 bg-[var(--color-secondary)]"></div>
-
-                                <div className="text-center mb-8">
-                                    <h1 className="text-4xl md:text-5xl font-black mb-2 tracking-[0.25em] text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-secondary)] to-[var(--color-primary)] flex items-center justify-center gap-3 filter drop-shadow-[0_0_15px_oklch(82%_0.15_85_/_0.2)]">
-                                        <i data-lucide="music-4" className="w-8 h-8 md:w-10 md:h-10 text-[var(--color-secondary)]"></i>
-                                        RHYTHM FLOW
-                                    </h1>
-                                    <div className="h-[2px] w-32 bg-gradient-to-r from-transparent via-[var(--color-secondary)] to-transparent mx-auto mb-3 opacity-60"></div>
-                                    <p className="text-xs tracking-[0.6em] text-[oklch(70%_0.02_250)] font-bold uppercase">盲打極限特訓艙</p>
-                                </div>
-
-                                <div className="flex flex-col items-center gap-6 w-full">
-                                    {/* Language Selection */}
-                                    <div className="w-full">
-                                        <div className="flex items-center gap-2 mb-2.5">
-                                            <div className="w-1.5 h-3 bg-[var(--color-primary)] rounded-full"></div>
-                                            <p className="text-[oklch(70%_0.02_250)] text-[10px] font-bold tracking-[0.15em] uppercase">Layout・輸入配置</p>
-                                        </div>
-                                        <div className="flex gap-4 w-full">
-                                            <button 
-                                                className={`flex-1 py-3 px-4 text-xs tracking-wider cursor-pointer btn-elegant flex items-center justify-center gap-2 ${language === 'en' ? 'active' : ''}`}
-                                                onClick={() => setLanguage('en')}
-                                            >
-                                                <i data-lucide="languages" className="w-3.5 h-3.5"></i> 英文鍵盤 (A-Z)
-                                            </button>
-                                            <button 
-                                                className={`flex-1 py-3 px-4 text-xs tracking-wider cursor-pointer btn-elegant flex items-center justify-center gap-2 ${language === 'zh' ? 'active' : ''}`}
-                                                onClick={() => setLanguage('zh')}
-                                            >
-                                                <i data-lucide="keyboard" className="w-3.5 h-3.5"></i> 注音模式 (ㄅ-ㄦ)
-                                            </button>
-                                        </div>
-                                        {language === 'zh' && (
-                                            <p className="text-amber-400 text-[10px] mt-2 text-center opacity-90 flex items-center justify-center gap-1.5 font-medium">
-                                                <i data-lucide="alert-circle" className="w-3 h-3"></i> 練習前請確保實體輸入法為【英文】
-                                            </p>
-                                        )}
-                                    </div>
-
-                                    {/* Difficulty Selection */}
-                                    <div className="w-full">
-                                        <div className="flex items-center gap-2 mb-2.5">
-                                            <div className="w-1.5 h-3 bg-[var(--color-secondary)] rounded-full"></div>
-                                            <p className="text-[oklch(70%_0.02_250)] text-[10px] font-bold tracking-[0.15em] uppercase border-b border-white/5 pb-1 w-full">Difficulty・訓練強度</p>
-                                        </div>
-                                        
-                                        <div className="flex flex-col gap-3">
-                                            {/* A: 新手村 */}
-                                            <div className="bg-white/[0.02] p-3.5 rounded-xl border border-white/5">
-                                                <p className="text-[var(--color-secondary)] text-[10px] font-bold tracking-[0.1em] text-left mb-2.5 uppercase flex items-center gap-1.5">
-                                                    <i data-lucide="graduation-cap" className="w-3.5 h-3.5"></i> A. 新手專區 (手部雙色標記，固定鍵位)
-                                                </p>
-                                                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 w-full">
-                                                    <button onClick={() => setDifficulty('novice-1')} className={`py-2 px-1 text-[10px] tracking-widest cursor-pointer btn-elegant ${difficulty === 'novice-1' ? 'active' : ''}`}>LV.1 (基準列)</button>
-                                                    <button onClick={() => setDifficulty('novice-2')} className={`py-2 px-1 text-[10px] tracking-widest cursor-pointer btn-elegant ${difficulty === 'novice-2' ? 'active' : ''}`}>LV.2 (+上列)</button>
-                                                    <button onClick={() => setDifficulty('novice-3')} className={`py-2 px-1 text-[10px] tracking-widest cursor-pointer btn-elegant ${difficulty === 'novice-3' ? 'active' : ''}`}>LV.3 (+下列)</button>
-                                                    <button onClick={() => setDifficulty('novice-4')} className={`py-2 px-1 text-[10px] tracking-widest cursor-pointer btn-elegant ${difficulty === 'novice-4' ? 'active' : ''}`}>LV.4 (全區)</button>
-                                                </div>
-                                            </div>
-
-                                            {/* B & C: 進階與高手 */}
-                                            <div className="bg-white/[0.02] p-3.5 rounded-xl border border-white/5">
-                                                <p className="text-[var(--color-primary)] text-[10px] font-bold tracking-[0.1em] text-left mb-2.5 uppercase flex items-center gap-1.5">
-                                                    <i data-lucide="zap" className="w-3.5 h-3.5"></i> B. 進階極限 (色彩統一，速度考驗)
-                                                </p>
-                                                <div className="grid grid-cols-2 gap-2 w-full">
-                                                    <button onClick={() => setDifficulty('standard')} className={`py-2 px-2 text-[10px] tracking-widest cursor-pointer btn-elegant ${difficulty === 'standard' ? 'active' : ''}`}>標準 (固定軌，中速)</button>
-                                                    <button onClick={() => setDifficulty('expert')} className={`py-2 px-2 text-[10px] tracking-widest cursor-pointer btn-elegant ${difficulty === 'expert' ? 'active' : ''}`}>高手 (隨機軌，極速)</button>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        {/* 難度提示文字 */}
-                                        <div className="h-4 mt-2.5 flex justify-center">
-                                            {difficulty.startsWith('novice') && (
-                                                <p className="text-[var(--color-secondary)] text-[11px] tracking-wider text-center opacity-90 flex items-center justify-center gap-1 font-medium">
-                                                    <i data-lucide="info" className="w-3.5 h-3.5"></i> 提示：左手為金色音符，右手為粉綠音符
-                                                </p>
-                                            )}
-                                            {difficulty === 'expert' && (
-                                                <p className="text-red-400 text-[11px] tracking-wider text-center opacity-90 flex items-center justify-center gap-1 font-medium animate-pulse">
-                                                    <i data-lucide="flame" className="w-3.5 h-3.5"></i> 警告：音符掉落軌道將與鍵盤位置完全脫鉤！
-                                                </p>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    {/* Start Button */}
-                                    <button 
-                                        onClick={handleStart}
-                                        className="mt-2 group relative inline-flex items-center justify-center px-16 py-4 font-bold text-black bg-gradient-to-r from-[var(--color-primary)] via-[var(--color-secondary)] to-[var(--color-primary)] rounded-xl overflow-hidden transition-all duration-300 hover:scale-[1.04] active:scale-95 shadow-[0_0_30px_oklch(82%_0.15_85_/_0.25)] hover:shadow-[0_0_50px_oklch(82%_0.15_85_/_0.55)] cursor-pointer tracking-[0.3em] text-xs font-black uppercase"
-                                    >
-                                        <span className="absolute inset-0 w-full h-full bg-white/15 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-                                        <span className="relative flex items-center gap-2 text-slate-950">
-                                            INITIALIZE <i data-lucide="play" className="w-4 h-4 fill-slate-950"></i>
-                                        </span>
-                                    </button>
-                                </div>
-
-                                <div className="mt-8 text-[oklch(60%_0.02_250)] text-[11px] tracking-widest text-center opacity-80 flex flex-col gap-1 leading-relaxed">
-                                    <p className="flex items-center justify-center gap-1"><i data-lucide="mouse-pointer-click" className="w-3 h-3"></i> 當字元落至底部判定線時，按下對應按鍵。</p>
-                                    <p className="font-bold text-[var(--color-secondary)]">全程注視螢幕，用肌肉記憶盲打，絕對不要低頭看鍵盤！</p>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                </div>
-            );
-        };
-
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
-    </script>
-</body>
-</html>
