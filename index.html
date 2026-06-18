@@ -14,7 +14,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.3/babel.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.344.0/umd/lucide.min.js"></script>
 
     <script>
         tailwind.config = {
@@ -200,7 +200,10 @@
 <body>
     <div id="root"></div>
 
-    <script type="text/babel" data-presets="react">
+    <script type="text/babel" data-type="module" data-presets="react">
+        /** @jsx React.createElement */
+        /** @jsxFrag React.Fragment */
+
         const { useState, useEffect, useRef, useCallback } = React;
 
         // --- 遊戲資料與設定 ---
