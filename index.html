@@ -5,20 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🎵 絕對節奏 (Rhythm Flow) - 盲打特訓</title>
     
-    <!-- Fonts for Elegant & Modern Styling -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Serif+TC:wght@400;600;900&family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400&display=swap" rel="stylesheet">
 
-    <!-- CDNs (強制鎖定 cdnjs 穩定版，清除所有 unpkg) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.3/babel.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.344.0/umd/lucide.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.292.0/umd/lucide.min.js"></script>
 
-    <!-- Tailwind Config for Custom Colors -->
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -203,11 +200,7 @@
 <body>
     <div id="root"></div>
 
-    <!-- [最終版防護] 徹底拔除 module 屬性，改用 env,react preset 確保跨環境正常運作 -->
-    <script type="text/babel" data-presets="env,react">
-        /** @jsx React.createElement */
-        /** @jsxFrag React.Fragment */
-
+    <script type="text/babel" data-type="module" data-presets="react">
         const { useState, useEffect, useRef, useCallback } = React;
 
         // --- 遊戲資料與設定 ---
