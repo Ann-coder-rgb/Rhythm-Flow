@@ -163,3 +163,753 @@
             mask-image: radial-gradient(ellipse at center, black, transparent 75%);
             -webkit-mask-image: radial-gradient(ellipse at center, black, transparent 75%);
             pointer-events: none;
+            z-index: 0;
+        }
+
+        /* 脈衝動畫 */
+        @keyframes pulse-elegant {
+            0% { transform: scale(1); text-shadow: 0 0 15px oklch(82% 0.15 85 / 0.6); }
+            50% { transform: scale(1.1); text-shadow: 0 0 35px oklch(82% 0.15 85 / 0.9); }
+            100% { transform: scale(1); text-shadow: 0 0 15px oklch(82% 0.15 85 / 0.6); }
+        }
+        
+        .animate-combo {
+            animation: pulse-elegant 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .glass-panel {
+            background: oklch(13% 0.02 250 / 0.7);
+            backdrop-filter: blur(24px) saturate(160%);
+            -webkit-backdrop-filter: blur(24px) saturate(160%);
+            border: 1px solid oklch(100% 0 0 / 0.07);
+            box-shadow: 
+                0 10px 40px oklch(0% 0 0 / 0.5),
+                inset 0 1px 1px oklch(100% 0 0 / 0.08);
+        }
+
+        @keyframes fade-in {
+            from { opacity: 0; transform: scale(0.96) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .animate-fade-in {
+            animation: fade-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel" data-type="module" data-presets="react">
+        const { useState, useEffect, useRef, useCallback } = React;
+
+        // --- 遊戲資料與設定 ---
+        const zhuyinMap = {
+            '1': 'ㄅ', '2': 'ㄉ', '3': 'ˇ', '4': 'ˋ', '5': 'ㄓ', '6': 'ˊ', '7': '˙', '8': 'ㄚ', '9': 'ㄞ', '0': 'ㄢ', '-': 'ㄦ',
+            'q': 'ㄆ', 'w': 'ㄊ', 'e': 'ㄍ', 'r': 'ㄐ', 't': 'ㄔ', 'y': 'ㄗ', 'u': 'ㄧ', 'i': 'ㄛ', 'o': 'ㄟ', 'p': 'ㄣ',
+            'a': 'ㄇ', 's': 'ㄋ', 'd': 'ㄎ', 'f': 'ㄑ', 'g': 'ㄕ', 'h': 'ㄘ', 'j': 'ㄨ', 'k': 'ㄜ', 'l': 'ㄠ', ';': 'ㄤ',
+            'z': 'ㄈ', 'x': 'ㄌ', 'c': 'ㄏ', 'v': 'ㄒ', 'b': 'ㄖ', 'n': 'ㄙ', 'm': 'ㄩ', ',': 'ㄝ', '.': 'ㄡ', '/': 'ㄥ'
+        };
+        
+        // 實體鍵盤位置對應與手部標示 (row: 1最上 4最下, col: 0~10由左至右, hand: L左手 R右手)
+        const keyboardLayout = {
+            '1': { col: 0, hand: 'L', row: 1 }, '2': { col: 1, hand: 'L', row: 1 }, '3': { col: 2, hand: 'L', row: 1 }, '4': { col: 3, hand: 'L', row: 1 }, '5': { col: 4, hand: 'L', row: 1 },
+            '6': { col: 5, hand: 'R', row: 1 }, '7': { col: 6, hand: 'R', row: 1 }, '8': { col: 7, hand: 'R', row: 1 }, '9': { col: 8, hand: 'R', row: 1 }, '0': { col: 9, hand: 'R', row: 1 }, '-': { col: 10, hand: 'R', row: 1 },
+            'q': { col: 0, hand: 'L', row: 2 }, 'w': { col: 1, hand: 'L', row: 2 }, 'e': { col: 2, hand: 'L', row: 2 }, 'r': { col: 3, hand: 'L', row: 2 }, 't': { col: 4, hand: 'L', row: 2 },
+            'y': { col: 5, hand: 'R', row: 2 }, 'u': { col: 6, hand: 'R', row: 2 }, 'i': { col: 7, hand: 'R', row: 2 }, 'o': { col: 8, hand: 'R', row: 2 }, 'p': { col: 9, hand: 'R', row: 2 },
+            'a': { col: 0, hand: 'L', row: 3 }, 's': { col: 1, hand: 'L', row: 3 }, 'd': { col: 2, hand: 'L', row: 3 }, 'f': { col: 3, hand: 'L', row: 3 }, 'g': { col: 4, hand: 'L', row: 3 },
+            'h': { col: 5, hand: 'R', row: 3 }, 'j': { col: 6, hand: 'R', row: 3 }, 'k': { col: 7, hand: 'R', row: 3 }, 'l': { col: 8, hand: 'R', row: 3 }, ';': { col: 9, hand: 'R', row: 3 },
+            'z': { col: 0, hand: 'L', row: 4 }, 'x': { col: 1, hand: 'L', row: 4 }, 'c': { col: 2, hand: 'L', row: 4 }, 'v': { col: 3, hand: 'L', row: 4 }, 'b': { col: 4, hand: 'L', row: 4 },
+            'n': { col: 5, hand: 'R', row: 4 }, 'm': { col: 6, hand: 'R', row: 4 }, ',': { col: 7, hand: 'R', row: 4 }, '.': { col: 8, hand: 'R', row: 4 }, '/': { col: 9, hand: 'R', row: 4 }
+        };
+
+        // 色彩定義 (Open Design: OKLch 感官平衡色彩)
+        const colors = {
+            perfect: '#f1cb6f', // oklch(82% 0.15 85) 香檳琉璃金 (完美)
+            great: '#68b6ef',   // oklch(72% 0.18 250) 活力電光藍 (極佳)
+            good: '#cc73e1',    // oklch(68% 0.22 310) 星雲紫 (良好)
+            bg: '#0c0d10',      // oklch(10% 0.015 250) 黑曜太空深底
+            hitLine: 'rgba(104, 182, 239, 0.45)'
+        };
+
+        const App = () => {
+            const [gameState, setGameState] = useState('menu'); // menu, playing
+            const [language, setLanguage] = useState('en');
+            const [difficulty, setDifficulty] = useState('novice-1');
+            
+            // 暫停狀態
+            const [isPaused, setIsPaused] = useState(false);
+            const isPausedRef = useRef(false);
+            
+            const canvasRef = useRef(null);
+            
+            // HUD Refs (避免 React 重新渲染導致 Canvas 掉幀)
+            const scoreDisplayRef = useRef(null);
+            const comboDisplayRef = useRef(null);
+            
+            // 遊戲引擎狀態
+            const engine = useRef({
+                score: 0,
+                combo: 0,
+                maxCombo: 0,
+                notes: [],
+                particles: [],
+                feedbackTexts: [],
+                canvasWidth: 0,
+                canvasHeight: 0,
+                hitLineY: 0,
+                lastTime: 0,
+                lastSpawnTime: 0,
+                pauseStartTime: 0, // 記錄暫停的當下時間
+                noteSpeed: 0.3,
+                spawnInterval: 1000,
+                hitLineGlow: 0,
+                reqId: null,
+                lang: 'en', // 存儲當下遊戲語言，防止閉包問題
+                diff: 'normal' // 存儲當下難度
+            });
+
+            // 音效引擎 Refs
+            const audioCtx = useRef({
+                initialized: false,
+                synthHit: null,
+                synthMiss: null,
+                bgmSynth: null,
+                bgmLoop: null
+            });
+
+            // 初始化 Lucide 圖示
+            useEffect(() => {
+                lucide.createIcons();
+            }, [gameState, isPaused, language, difficulty]);
+
+            // --- 視窗縮放處理 ---
+            useEffect(() => {
+                const handleResize = () => {
+                    const canvas = canvasRef.current;
+                    if (!canvas) return;
+                    
+                    const width = Math.min(window.innerWidth, 600);
+                    const height = window.innerHeight;
+                    canvas.width = width;
+                    canvas.height = height;
+                    
+                    engine.current.canvasWidth = width;
+                    engine.current.canvasHeight = height;
+                    engine.current.hitLineY = height * 0.85;
+                };
+                
+                window.addEventListener('resize', handleResize);
+                handleResize(); // 初始呼叫
+                
+                return () => window.removeEventListener('resize', handleResize);
+            }, []);
+
+            // --- 音效初始化 ---
+            const initAudio = async () => {
+                if (audioCtx.current.initialized) return;
+                await Tone.start();
+                
+                // 擊中音效 (和弦用 PolySynth)
+                audioCtx.current.synthHit = new Tone.PolySynth(Tone.Synth, {
+                    oscillator: { type: 'triangle' },
+                    envelope: { attack: 0.005, decay: 0.2, sustain: 0.1, release: 0.5 }
+                }).toDestination();
+                audioCtx.current.synthHit.volume.value = -8;
+
+                // 【修正區】將失誤音效也改為 PolySynth，解決玩家短時間連續按錯導致的 Timeline 排程崩潰問題
+                audioCtx.current.synthMiss = new Tone.PolySynth(Tone.Synth, {
+                    oscillator: { type: 'sine' },
+                    envelope: { attack: 0.01, decay: 0.4, sustain: 0, release: 0.4 }
+                }).toDestination();
+                audioCtx.current.synthMiss.volume.value = -2;
+
+                audioCtx.current.bgmSynth = new Tone.MembraneSynth({
+                    envelope: { attack: 0.02, decay: 0.5, sustain: 0, release: 0.4 }
+                }).toDestination();
+                audioCtx.current.bgmSynth.volume.value = -12;
+                
+                audioCtx.current.initialized = true;
+            };
+
+            const startBGM = (bpm) => {
+                Tone.Transport.bpm.value = bpm;
+                if(audioCtx.current.bgmLoop) audioCtx.current.bgmLoop.dispose();
+                
+                audioCtx.current.bgmLoop = new Tone.Loop(time => {
+                    audioCtx.current.bgmSynth.triggerAttackRelease("C1", "8n", time);
+                    engine.current.hitLineGlow = 1.0; 
+                }, "4n").start(0);
+                
+                Tone.Transport.start();
+            };
+
+            const stopBGM = () => {
+                Tone.Transport.stop();
+                if(audioCtx.current.bgmLoop) audioCtx.current.bgmLoop.stop();
+            };
+
+            // --- 核心遊戲邏輯 ---
+            const updateHUD = () => {
+                if (scoreDisplayRef.current) {
+                    scoreDisplayRef.current.innerText = Math.floor(engine.current.score).toString().padStart(5, '0');
+                }
+                if (comboDisplayRef.current) {
+                    comboDisplayRef.current.innerText = engine.current.combo;
+                    
+                    comboDisplayRef.current.classList.remove('animate-combo');
+                    void comboDisplayRef.current.offsetWidth;
+                    comboDisplayRef.current.classList.add('animate-combo');
+                    
+                    if(engine.current.combo > 10) {
+                        comboDisplayRef.current.style.color = colors.perfect;
+                    } else {
+                        comboDisplayRef.current.style.color = '#e6d5c3';
+                    }
+                }
+            };
+
+            const spawnNote = () => {
+                const eng = engine.current;
+                const isZh = language === 'zh';
+                let pool = [];
+                const allKeys = Object.keys(keyboardLayout);
+
+                // 根據難度決定出題字庫
+                if (difficulty === 'novice-1') {
+                    pool = allKeys.filter(k => keyboardLayout[k].row === 3);
+                } else if (difficulty === 'novice-2') {
+                    pool = allKeys.filter(k => keyboardLayout[k].row === 2 || keyboardLayout[k].row === 3);
+                } else if (difficulty === 'novice-3') {
+                    pool = allKeys.filter(k => keyboardLayout[k].row >= 2 && keyboardLayout[k].row <= 4);
+                } else {
+                    pool = allKeys; // novice-4, standard, expert
+                }
+
+                const targetKey = pool[Math.floor(Math.random() * pool.length)];
+                const keyInfo = keyboardLayout[targetKey];
+                
+                // 處理顯示字元 (注音 vs 英文)
+                let displayChar;
+                if (isZh) {
+                    displayChar = zhuyinMap[targetKey];
+                } else {
+                    // 標點符號不轉大寫
+                    const punctuation = [';', '-', ',', '.', '/'];
+                    displayChar = punctuation.includes(targetKey) ? targetKey : targetKey.toUpperCase();
+                }
+
+                let x;
+                let color;
+
+                // 決定掉落軌道
+                if (difficulty === 'expert') {
+                    // 高手模式：打亂軌道位置 (5軌隨機)
+                    const currentLanes = 5;
+                    const laneWidth = eng.canvasWidth / currentLanes;
+                    const randomLane = Math.floor(Math.random() * currentLanes);
+                    x = (randomLane * laneWidth) + (laneWidth / 2);
+                } else {
+                    // 新手村與標準模式：嚴格對應實體鍵盤位置 (11軌對應)
+                    const currentLanes = 11;
+                    const laneWidth = eng.canvasWidth / currentLanes;
+                    x = (keyInfo.col * laneWidth) + (laneWidth / 2);
+                }
+
+                // 決定顏色 (新手模式分左右手)
+                if (difficulty.startsWith('novice')) {
+                    // 左手金色，右手粉綠
+                    color = keyInfo.hand === 'L' ? '#f1cb6f' : '#99f6e4';
+                } else {
+                    const noteColors = [colors.perfect, colors.great, colors.good, '#e2e8f0'];
+                    color = noteColors[Math.floor(Math.random() * noteColors.length)];
+                }
+
+                eng.notes.push({
+                    x, y: -50,
+                    targetKey, displayChar,
+                    active: true, color
+                });
+            };
+
+            const createParticles = (x, y, color) => {
+                for (let i = 0; i < 12; i++) {
+                    engine.current.particles.push({
+                        x, y,
+                        vx: (Math.random() - 0.5) * 8,
+                        vy: (Math.random() - 0.5) * 8,
+                        life: 400 + Math.random() * 300,
+                        color,
+                        size: Math.random() * 3 + 1
+                    });
+                }
+            };
+
+            const registerHit = (text, x, y, pts, color) => {
+                engine.current.score += pts * (1 + (engine.current.combo * 0.1));
+                engine.current.combo++;
+                if (engine.current.combo > engine.current.maxCombo) {
+                    engine.current.maxCombo = engine.current.combo;
+                }
+                
+                engine.current.feedbackTexts.push({ text, x, y, life: 600, maxLife: 600, color });
+                updateHUD();
+            };
+
+            const registerMiss = (isWrongKey = false) => {
+                engine.current.combo = 0;
+                updateHUD();
+                
+                if (audioCtx.current.initialized && audioCtx.current.synthMiss) {
+                    // 加入 Tone.now() 確保 PolySynth 調度準確，避免連按錯誤導致排程衝突
+                    audioCtx.current.synthMiss.triggerAttackRelease("G1", "16n", Tone.now());
+                }
+            };
+
+            // 遊戲更新循環
+            const update = (deltaTime) => {
+                const currentTime = performance.now();
+                const eng = engine.current;
+
+                if (currentTime - eng.lastSpawnTime > eng.spawnInterval) {
+                    spawnNote();
+                    eng.lastSpawnTime = currentTime;
+                }
+
+                for (let i = eng.notes.length - 1; i >= 0; i--) {
+                    let note = eng.notes[i];
+                    if (!note.active) continue;
+
+                    note.y += eng.noteSpeed * deltaTime;
+
+                    if (note.y > eng.canvasHeight + 50) {
+                        note.active = false;
+                        registerMiss();
+                    }
+                }
+                eng.notes = eng.notes.filter(n => n.active);
+
+                eng.hitLineGlow = Math.max(0, eng.hitLineGlow - deltaTime * 0.001);
+                
+                for (let i = eng.particles.length - 1; i >= 0; i--) {
+                    let p = eng.particles[i];
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.life -= deltaTime;
+                    if (p.life <= 0) eng.particles.splice(i, 1);
+                }
+
+                for (let i = eng.feedbackTexts.length - 1; i >= 0; i--) {
+                    let f = eng.feedbackTexts[i];
+                    f.y -= deltaTime * 0.03;
+                    f.life -= deltaTime;
+                    if (f.life <= 0) eng.feedbackTexts.splice(i, 1);
+                }
+            };
+
+            // 繪圖循環
+            const draw = () => {
+                const canvas = canvasRef.current;
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                const eng = engine.current;
+
+                ctx.clearRect(0, 0, eng.canvasWidth, eng.canvasHeight);
+
+                // 計算當前軌道數
+                const currentLanes = difficulty === 'expert' ? 5 : 11;
+                const laneWidth = eng.canvasWidth / currentLanes;
+
+                // 畫軌道背景線
+                ctx.strokeStyle = 'rgba(104, 182, 239, 0.06)';
+                ctx.lineWidth = 1;
+                for(let i=1; i<currentLanes; i++){
+                    ctx.beginPath();
+                    ctx.moveTo(i * laneWidth, 0);
+                    ctx.lineTo(i * laneWidth, eng.canvasHeight);
+                    ctx.stroke();
+                }
+
+                // 畫判定線
+                const glowAlpha = 0.2 + eng.hitLineGlow * 0.5;
+                ctx.shadowBlur = 20 * eng.hitLineGlow;
+                ctx.shadowColor = colors.great;
+                ctx.fillStyle = `rgba(104, 182, 239, ${glowAlpha})`;
+                ctx.fillRect(0, eng.hitLineY - 2, eng.canvasWidth, 4);
+                
+                ctx.fillStyle = colors.perfect;
+                ctx.fillRect(0, eng.hitLineY - 2, 12, 4);
+                ctx.fillRect(eng.canvasWidth - 12, eng.hitLineY - 2, 12, 4);
+                ctx.shadowBlur = 0; 
+
+                // 畫音符 (動態縮放半徑與字體)
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                const noteRadius = Math.min(22, laneWidth * 0.45);
+                
+                for (let note of eng.notes) {
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = note.color;
+                    ctx.strokeStyle = note.color;
+                    ctx.lineWidth = 1.5;
+                    ctx.beginPath();
+                    ctx.arc(note.x, note.y, noteRadius, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(10, 8, 7, 0.8)';
+                    ctx.fill();
+                    ctx.stroke();
+                    
+                    ctx.fillStyle = note.color;
+                    const fontSize = Math.max(12, noteRadius);
+                    ctx.font = `600 ${fontSize}px "Space Grotesk", "Outfit", sans-serif`;
+                    ctx.fillText(note.displayChar, note.x, note.y + (fontSize * 0.1));
+                    ctx.shadowBlur = 0; 
+                }
+
+                // 畫粒子
+                for (let p of eng.particles) {
+                    ctx.fillStyle = p.color;
+                    ctx.globalAlpha = p.life / 700;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                ctx.globalAlpha = 1.0;
+
+                // 畫文字回饋
+                for (let f of eng.feedbackTexts) {
+                    ctx.fillStyle = f.color;
+                    ctx.globalAlpha = f.life / f.maxLife;
+                    ctx.font = 'italic 800 24px "Space Grotesk", "Outfit", sans-serif';
+                    ctx.shadowBlur = 12;
+                    ctx.shadowColor = f.color;
+                    ctx.fillText(f.text, f.x, f.y);
+                }
+                ctx.globalAlpha = 1.0;
+                ctx.shadowBlur = 0;
+            };
+
+            const gameLoop = useCallback((currentTime) => {
+                if (gameState !== 'playing') return;
+
+                const deltaTime = currentTime - engine.current.lastTime;
+                engine.current.lastTime = currentTime;
+
+                update(deltaTime);
+                draw();
+
+                engine.current.reqId = requestAnimationFrame(gameLoop);
+            }, [gameState]);
+
+            // --- 暫停功能邏輯 ---
+            const togglePause = useCallback(() => {
+                if (gameState !== 'playing') return;
+                
+                const newPaused = !isPausedRef.current;
+                isPausedRef.current = newPaused;
+                setIsPaused(newPaused);
+                
+                if (newPaused) {
+                    Tone.Transport.pause();
+                    if (engine.current.reqId) cancelAnimationFrame(engine.current.reqId);
+                    engine.current.pauseStartTime = performance.now();
+                } else {
+                    Tone.Transport.start();
+                    // 扣除暫停經過的時間，避免音符瞬間暴走掉落
+                    const pauseDuration = performance.now() - engine.current.pauseStartTime;
+                    engine.current.lastTime += pauseDuration;
+                    engine.current.lastSpawnTime += pauseDuration;
+                    
+                    engine.current.reqId = requestAnimationFrame(gameLoop);
+                }
+            }, [gameState, gameLoop]);
+
+            const quitGame = () => {
+                isPausedRef.current = false;
+                setIsPaused(false);
+                setGameState('menu');
+                stopBGM();
+                if (engine.current.reqId) cancelAnimationFrame(engine.current.reqId);
+            };
+
+            // --- 鍵盤監聽 ---
+            useEffect(() => {
+                const handleKeyDown = (e) => {
+                    if (gameState !== 'playing') return;
+                    
+                    // 暫停快捷鍵
+                    if (e.key === 'Escape') {
+                        togglePause();
+                        return;
+                    }
+                    
+                    if (isPausedRef.current) return;
+                    if (e.ctrlKey || e.altKey || e.metaKey || e.shiftKey) return;
+                    
+                    let key = e.key.toLowerCase();
+                    const eng = engine.current;
+                    let targetNoteIndex = -1;
+                    let max_Y = -100;
+
+                    for (let i = 0; i < eng.notes.length; i++) {
+                        if (eng.notes[i].targetKey === key && eng.notes[i].y > max_Y) {
+                            let dist = Math.abs(eng.notes[i].y - eng.hitLineY);
+                            if (dist < 150) { 
+                                max_Y = eng.notes[i].y;
+                                targetNoteIndex = i;
+                            }
+                        }
+                    }
+
+                    if (targetNoteIndex !== -1) {
+                        let note = eng.notes[targetNoteIndex];
+                        let dist = Math.abs(note.y - eng.hitLineY);
+                        note.active = false;
+
+                        createParticles(note.x, note.y, note.color);
+                        
+                        if (dist < 30) {
+                            registerHit('Perfect', note.x, note.y, 300, colors.perfect);
+                            audioCtx.current.synthHit?.triggerAttackRelease(["C5", "E5", "G5"], "16n", Tone.now());
+                        } else if (dist < 80) {
+                            registerHit('Great', note.x, note.y, 100, colors.great);
+                            audioCtx.current.synthHit?.triggerAttackRelease("E5", "16n", Tone.now());
+                        } else {
+                            registerHit('Good', note.x, note.y, 50, colors.good);
+                            audioCtx.current.synthHit?.triggerAttackRelease("C5", "16n", Tone.now());
+                        }
+                    } else {
+                        registerMiss(true);
+                    }
+                };
+
+                window.addEventListener('keydown', handleKeyDown);
+                return () => window.removeEventListener('keydown', handleKeyDown);
+            }, [gameState, togglePause]);
+
+            // --- 啟動與停止邏輯 ---
+            useEffect(() => {
+                if (gameState === 'playing' && !isPausedRef.current) {
+                    const eng = engine.current;
+                    eng.score = 0; eng.combo = 0; eng.maxCombo = 0;
+                    eng.notes = []; eng.particles = []; eng.feedbackTexts = [];
+                    updateHUD();
+
+                    let bpm = 100;
+                    if (difficulty.startsWith('novice')) { 
+                        bpm = 80; 
+                        eng.noteSpeed = window.innerHeight * 0.00035; 
+                    } else if (difficulty === 'standard') { 
+                        bpm = 120; 
+                        eng.noteSpeed = window.innerHeight * 0.00055; 
+                    } else if (difficulty === 'expert') { 
+                        bpm = 160; 
+                        eng.noteSpeed = window.innerHeight * 0.00085; 
+                    }
+                    
+                    eng.spawnInterval = 60000 / bpm;
+                    
+                    startBGM(bpm);
+                    eng.lastTime = performance.now();
+                    eng.lastSpawnTime = eng.lastTime;
+                    eng.reqId = requestAnimationFrame(gameLoop);
+                }
+                
+                return () => {
+                    if (gameState !== 'playing') {
+                        stopBGM();
+                        if (engine.current.reqId) cancelAnimationFrame(engine.current.reqId);
+                    }
+                };
+            }, [gameState, difficulty]); // 將 gameLoop 移出依賴，避免重複初始化
+
+            const handleStart = async () => {
+                await initAudio();
+                setGameState('playing');
+                isPausedRef.current = false;
+                setIsPaused(false);
+            };
+
+            return (
+                <div className="relative w-screen h-screen flex justify-center items-center bg-[var(--color-bg)] font-sans overflow-hidden">
+                    {/* Ambient Graphics */}
+                    <div className="ambient-mesh"></div>
+                    <div className="grid-overlay"></div>
+                    
+                    <canvas ref={canvasRef} className="relative z-10"></canvas>
+                    
+                    {/* HUD Layer */}
+                    <div className={`absolute top-0 left-0 w-full h-full pointer-events-none flex flex-col z-20 transition-opacity duration-500 ${gameState === 'playing' ? 'opacity-100' : 'opacity-0'}`}>
+                        <div className="flex justify-between items-center p-4 md:p-6 w-full max-w-[620px] mx-auto mt-4">
+                            {/* Score Capsule */}
+                            <div className="flex items-center gap-3 glass-panel px-4 py-2 rounded-full pointer-events-auto border border-white/5 shadow-lg shadow-black/30">
+                                <div className="w-2 h-2 rounded-full bg-[var(--color-primary)] animate-pulse shadow-[0_0_10px_var(--color-primary)]"></div>
+                                <div className="flex flex-col">
+                                    <span className="text-[oklch(70%_0.02_250)] text-[10px] font-bold tracking-[0.15em] uppercase leading-none mb-0.5">Score</span>
+                                    <span ref={scoreDisplayRef} className="text-lg font-bold text-white tracking-wider tabular-nums leading-none">00000</span>
+                                </div>
+                            </div>
+                            
+                            {/* Pause Button Capsule */}
+                            <button 
+                                onClick={togglePause}
+                                className="pointer-events-auto flex items-center justify-center p-3 rounded-full border border-white/5 bg-white/5 hover:bg-white/10 text-[var(--color-text-sub)] hover:text-white hover:border-[var(--color-secondary)] hover:shadow-[0_0_15px_oklch(82%_0.15_85_/_0.2)] active:scale-90 transition-all duration-300 cursor-pointer shadow-lg shadow-black/20"
+                                title="暫停 (ESC)"
+                            >
+                                <i data-lucide={isPaused ? "play" : "pause"} className="w-4.5 h-4.5"></i>
+                            </button>
+
+                            {/* Combo Capsule */}
+                            <div className="flex items-center gap-3 glass-panel px-4 py-2 rounded-full pointer-events-auto border border-white/5 shadow-lg shadow-black/30">
+                                <div className="flex flex-col items-end">
+                                    <span className="text-[oklch(70%_0.02_250)] text-[10px] font-bold tracking-[0.15em] uppercase leading-none mb-0.5">Combo</span>
+                                    <span ref={comboDisplayRef} className="text-lg font-extrabold text-[var(--color-secondary)] tabular-nums leading-none transition-all duration-300">0</span>
+                                </div>
+                                <div className="w-2 h-2 rounded-full bg-[var(--color-secondary)] shadow-[0_0_10px_var(--color-secondary)]"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Pause Screen */}
+                    {isPaused && (
+                        <div className="absolute inset-0 glass-panel z-40 flex flex-col justify-center items-center backdrop-blur-md">
+                            <div className="text-center mb-10">
+                                <h2 className="text-4xl md:text-5xl font-extrabold tracking-[0.4em] text-[var(--color-secondary)] glow-text-gold">PAUSED</h2>
+                                <div className="h-[2px] w-20 bg-gradient-to-r from-transparent via-[var(--color-secondary)] to-transparent mx-auto mt-4 opacity-70"></div>
+                            </div>
+                            <div className="flex flex-col gap-4 w-full max-w-xs px-6">
+                                <button onClick={togglePause} className="btn-elegant py-3 px-6 text-xs tracking-[0.3em] uppercase cursor-pointer font-bold flex items-center justify-center gap-2">
+                                    <i data-lucide="play" className="w-3.5 h-3.5"></i> Resume
+                                </button>
+                                <button onClick={quitGame} className="btn-elegant py-3 px-6 text-xs tracking-[0.3em] uppercase text-red-400 border-red-500/10 hover:border-red-500/50 hover:bg-red-500/10 cursor-pointer font-bold flex items-center justify-center gap-2">
+                                    <i data-lucide="log-out" className="w-3.5 h-3.5"></i> Quit to Menu
+                                </button>
+                            </div>
+                            <p className="absolute bottom-10 text-[oklch(60%_0.02_250)] text-xs tracking-[0.2em] uppercase flex items-center gap-1.5 animate-pulse">
+                                <i data-lucide="keyboard" className="w-3.5 h-3.5"></i> Press ESC to Resume
+                            </p>
+                        </div>
+                    )}
+
+                    {/* Menu Screen */}
+                    {gameState === 'menu' && (
+                        <div className="absolute inset-0 z-50 flex flex-col justify-center items-center p-6">
+                            <div className="w-full max-w-lg glass-panel p-8 md:p-10 rounded-2xl border border-white/5 shadow-2xl flex flex-col justify-center items-center animate-fade-in relative overflow-hidden">
+                                {/* Decorative Tech Corners */}
+                                <div className="absolute top-0 left-0 w-8 h-[2px] bg-[var(--color-primary)]"></div>
+                                <div className="absolute top-0 left-0 w-[2px] h-8 bg-[var(--color-primary)]"></div>
+                                <div className="absolute bottom-0 right-0 w-8 h-[2px] bg-[var(--color-secondary)]"></div>
+                                <div className="absolute bottom-0 right-0 w-[2px] h-8 bg-[var(--color-secondary)]"></div>
+
+                                <div className="text-center mb-8">
+                                    <h1 className="text-4xl md:text-5xl font-black mb-2 tracking-[0.25em] text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-secondary)] to-[var(--color-primary)] flex items-center justify-center gap-3 filter drop-shadow-[0_0_15px_oklch(82%_0.15_85_/_0.2)]">
+                                        <i data-lucide="music-4" className="w-8 h-8 md:w-10 md:h-10 text-[var(--color-secondary)]"></i>
+                                        RHYTHM FLOW
+                                    </h1>
+                                    <div className="h-[2px] w-32 bg-gradient-to-r from-transparent via-[var(--color-secondary)] to-transparent mx-auto mb-3 opacity-60"></div>
+                                    <p className="text-xs tracking-[0.6em] text-[oklch(70%_0.02_250)] font-bold uppercase">盲打極限特訓艙</p>
+                                </div>
+
+                                <div className="flex flex-col items-center gap-6 w-full">
+                                    {/* Language Selection */}
+                                    <div className="w-full">
+                                        <div className="flex items-center gap-2 mb-2.5">
+                                            <div className="w-1.5 h-3 bg-[var(--color-primary)] rounded-full"></div>
+                                            <p className="text-[oklch(70%_0.02_250)] text-[10px] font-bold tracking-[0.15em] uppercase">Layout・輸入配置</p>
+                                        </div>
+                                        <div className="flex gap-4 w-full">
+                                            <button 
+                                                className={`flex-1 py-3 px-4 text-xs tracking-wider cursor-pointer btn-elegant flex items-center justify-center gap-2 ${language === 'en' ? 'active' : ''}`}
+                                                onClick={() => setLanguage('en')}
+                                            >
+                                                <i data-lucide="languages" className="w-3.5 h-3.5"></i> 英文鍵盤 (A-Z)
+                                            </button>
+                                            <button 
+                                                className={`flex-1 py-3 px-4 text-xs tracking-wider cursor-pointer btn-elegant flex items-center justify-center gap-2 ${language === 'zh' ? 'active' : ''}`}
+                                                onClick={() => setLanguage('zh')}
+                                            >
+                                                <i data-lucide="keyboard" className="w-3.5 h-3.5"></i> 注音模式 (ㄅ-ㄦ)
+                                            </button>
+                                        </div>
+                                        {language === 'zh' && (
+                                            <p className="text-amber-400 text-[10px] mt-2 text-center opacity-90 flex items-center justify-center gap-1.5 font-medium">
+                                                <i data-lucide="alert-circle" className="w-3 h-3"></i> 練習前請確保實體輸入法為【英文】
+                                            </p>
+                                        )}
+                                    </div>
+
+                                    {/* Difficulty Selection */}
+                                    <div className="w-full">
+                                        <div className="flex items-center gap-2 mb-2.5">
+                                            <div className="w-1.5 h-3 bg-[var(--color-secondary)] rounded-full"></div>
+                                            <p className="text-[oklch(70%_0.02_250)] text-[10px] font-bold tracking-[0.15em] uppercase border-b border-white/5 pb-1 w-full">Difficulty・訓練強度</p>
+                                        </div>
+                                        
+                                        <div className="flex flex-col gap-3">
+                                            {/* A: 新手村 */}
+                                            <div className="bg-white/[0.02] p-3.5 rounded-xl border border-white/5">
+                                                <p className="text-[var(--color-secondary)] text-[10px] font-bold tracking-[0.1em] text-left mb-2.5 uppercase flex items-center gap-1.5">
+                                                    <i data-lucide="graduation-cap" className="w-3.5 h-3.5"></i> A. 新手專區 (手部雙色標記，固定鍵位)
+                                                </p>
+                                                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 w-full">
+                                                    <button onClick={() => setDifficulty('novice-1')} className={`py-2 px-1 text-[10px] tracking-widest cursor-pointer btn-elegant ${difficulty === 'novice-1' ? 'active' : ''}`}>LV.1 (基準列)</button>
+                                                    <button onClick={() => setDifficulty('novice-2')} className={`py-2 px-1 text-[10px] tracking-widest cursor-pointer btn-elegant ${difficulty === 'novice-2' ? 'active' : ''}`}>LV.2 (+上列)</button>
+                                                    <button onClick={() => setDifficulty('novice-3')} className={`py-2 px-1 text-[10px] tracking-widest cursor-pointer btn-elegant ${difficulty === 'novice-3' ? 'active' : ''}`}>LV.3 (+下列)</button>
+                                                    <button onClick={() => setDifficulty('novice-4')} className={`py-2 px-1 text-[10px] tracking-widest cursor-pointer btn-elegant ${difficulty === 'novice-4' ? 'active' : ''}`}>LV.4 (全區)</button>
+                                                </div>
+                                            </div>
+
+                                            {/* B & C: 進階與高手 */}
+                                            <div className="bg-white/[0.02] p-3.5 rounded-xl border border-white/5">
+                                                <p className="text-[var(--color-primary)] text-[10px] font-bold tracking-[0.1em] text-left mb-2.5 uppercase flex items-center gap-1.5">
+                                                    <i data-lucide="zap" className="w-3.5 h-3.5"></i> B. 進階極限 (色彩統一，速度考驗)
+                                                </p>
+                                                <div className="grid grid-cols-2 gap-2 w-full">
+                                                    <button onClick={() => setDifficulty('standard')} className={`py-2 px-2 text-[10px] tracking-widest cursor-pointer btn-elegant ${difficulty === 'standard' ? 'active' : ''}`}>標準 (固定軌，中速)</button>
+                                                    <button onClick={() => setDifficulty('expert')} className={`py-2 px-2 text-[10px] tracking-widest cursor-pointer btn-elegant ${difficulty === 'expert' ? 'active' : ''}`}>高手 (隨機軌，極速)</button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* 難度提示文字 */}
+                                        <div className="h-4 mt-2.5 flex justify-center">
+                                            {difficulty.startsWith('novice') && (
+                                                <p className="text-[var(--color-secondary)] text-[11px] tracking-wider text-center opacity-90 flex items-center justify-center gap-1 font-medium">
+                                                    <i data-lucide="info" className="w-3.5 h-3.5"></i> 提示：左手為金色音符，右手為粉綠音符
+                                                </p>
+                                            )}
+                                            {difficulty === 'expert' && (
+                                                <p className="text-red-400 text-[11px] tracking-wider text-center opacity-90 flex items-center justify-center gap-1 font-medium animate-pulse">
+                                                    <i data-lucide="flame" className="w-3.5 h-3.5"></i> 警告：音符掉落軌道將與鍵盤位置完全脫鉤！
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* Start Button */}
+                                    <button 
+                                        onClick={handleStart}
+                                        className="mt-2 group relative inline-flex items-center justify-center px-16 py-4 font-bold text-black bg-gradient-to-r from-[var(--color-primary)] via-[var(--color-secondary)] to-[var(--color-primary)] rounded-xl overflow-hidden transition-all duration-300 hover:scale-[1.04] active:scale-95 shadow-[0_0_30px_oklch(82%_0.15_85_/_0.25)] hover:shadow-[0_0_50px_oklch(82%_0.15_85_/_0.55)] cursor-pointer tracking-[0.3em] text-xs font-black uppercase"
+                                    >
+                                        <span className="absolute inset-0 w-full h-full bg-white/15 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+                                        <span className="relative flex items-center gap-2 text-slate-950">
+                                            INITIALIZE <i data-lucide="play" className="w-4 h-4 fill-slate-950"></i>
+                                        </span>
+                                    </button>
+                                </div>
+
+                                <div className="mt-8 text-[oklch(60%_0.02_250)] text-[11px] tracking-widest text-center opacity-80 flex flex-col gap-1 leading-relaxed">
+                                    <p className="flex items-center justify-center gap-1"><i data-lucide="mouse-pointer-click" className="w-3 h-3"></i> 當字元落至底部判定線時，按下對應按鍵。</p>
+                                    <p className="font-bold text-[var(--color-secondary)]">全程注視螢幕，用肌肉記憶盲打，絕對不要低頭看鍵盤！</p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
